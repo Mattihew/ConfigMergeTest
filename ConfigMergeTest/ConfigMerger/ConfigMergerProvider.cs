@@ -34,15 +34,17 @@ public class ConfigMergerProvider(string arrayPath, IConfigurationProvider provi
         {
             return provider.GetChildKeys(earlierKeys, parentPath);
         }
-
+        else if (parentPath != arrayPath)
+        {
+            return provider.GetChildKeys(earlierKeys, MapPath(parentPath));
+        }
+        
         var keys = earlierKeys.ToList();
-        var keyInts = TryParse(keys).ToList();
-        _offset = keyInts.Max() + 1 ?? 0;
+        _offset = TryParse(keys).Max() + 1 ?? 0;
 
         var result = provider.GetChildKeys(Enumerable.Empty<string>(), parentPath);
 
-        var results = keys.Concat(result.Select(key => int.TryParse(key, out var value) ? (value + _offset).ToString() : key));
-        return results;
+        return keys.Concat(result.Select(key => int.TryParse(key, out var value) ? (value + _offset).ToString() : key));
     }
 
     private IEnumerable<int?> TryParse(IEnumerable<string> input) =>

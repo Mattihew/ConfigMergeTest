@@ -15,12 +15,12 @@ builder.AddConfigMerger("test", c =>
     c.AddInMemoryCollection(new Dictionary<string, string>()
     {
         { "test:0", "third" },
-        { "test:1", "fourth" }
+        { "test:1:name", "fourth" }
     }!);
     c.AddInMemoryCollection(new Dictionary<string, string>()
     {
         { "test:0:name", "fifth" },
-        { "test:0:value", "sixth" }
+        { "test:0:value", "sixth" },
     }!);
 });
 
