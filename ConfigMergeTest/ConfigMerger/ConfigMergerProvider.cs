@@ -3,7 +3,7 @@ using Microsoft.Extensions.Primitives;
 
 namespace ConfigMergeTest.ConfigMerger;
 
-public class ConfigMergerProvider(string arrayPath, IConfigurationProvider provider) : IConfigurationProvider
+public class ConfigMergerProvider(IEnumerable<string> arrayPaths, IConfigurationProvider provider) : IConfigurationProvider
 {
     private int _offset = 0;
 
@@ -17,7 +17,8 @@ public class ConfigMergerProvider(string arrayPath, IConfigurationProvider provi
 
     private string MapPath(string key)
     {
-        if (!key.StartsWith(arrayPath + ':'))
+        var arrayPath = arrayPaths.FirstOrDefault(arrayPath => key.StartsWith(arrayPath + ':'));
+        if (arrayPath is null ||!key.StartsWith(arrayPath + ':'))
         {
             return key;
         }
@@ -30,7 +31,9 @@ public class ConfigMergerProvider(string arrayPath, IConfigurationProvider provi
 
     public IEnumerable<string> GetChildKeys(IEnumerable<string> earlierKeys, string? parentPath)
     {
-        if (parentPath is null || !parentPath.StartsWith(arrayPath))
+        if (parentPath is null) return provider.GetChildKeys(earlierKeys, parentPath);
+        var arrayPath = arrayPaths.FirstOrDefault(arrayPath => arrayPath == parentPath || parentPath.StartsWith(arrayPath + ':'));
+        if (arrayPath is null)
         {
             return provider.GetChildKeys(earlierKeys, parentPath);
         }

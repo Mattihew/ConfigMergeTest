@@ -5,22 +5,25 @@ using Microsoft.Extensions.Configuration;
 
 var builder = new ConfigurationBuilder();
 
-builder.AddConfigMerger("test", c =>
+builder.AddConfigMerger(["test", "test2"], c =>
 {
     c.AddInMemoryCollection(new Dictionary<string, string>()
     {
         { "test:0", "first" },
-        { "test:1", "second" }
+        { "test:1", "second" },
+        {"test2:1", "foo" }
     }!);
     c.AddInMemoryCollection(new Dictionary<string, string>()
     {
         { "test:0", "third" },
-        { "test:1:name", "fourth" }
+        { "test:1:name", "fourth" },
+        { "test2:0", "bar" }
     }!);
     c.AddInMemoryCollection(new Dictionary<string, string>()
     {
         { "test:0:name", "fifth" },
         { "test:0:value", "sixth" },
+        { "test2:0:name", "baz"}
     }!);
 });
 
